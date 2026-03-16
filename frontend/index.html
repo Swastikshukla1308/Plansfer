@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plansfer - Transfer Your Playlists Across Platforms</title>
+    <script>
+        (function () {
+            try {
+                var savedTheme = localStorage.getItem('musikTransferTheme') || 'light';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } catch (error) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
+    <script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Background Gradient -->
+    <div class="main-bg"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container fluid">
+            <div class="logo">
+                <span class="logo-text">PLANSFER</span>
+            </div>
+            <nav class="nav" id="main-nav">
+                <div class="nav-dropdown">
+                    <button class="nav-link dropdown-trigger">Features ▾</button>
+                    <div class="dropdown-menu">
+                        <a href="index.html" onclick="handleFeatureNavigation(event, 'index.html')"
+                            class="dropdown-item">Transfer Playlist</a>
+                        <a href="create-playlist.html" onclick="handleFeatureNavigation(event, 'create-playlist.html')"
+                            class="dropdown-item">AI Playlist Creator</a>
+                    </div>
+                </div>
+                <div id="auth-section">
+                    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
+                    <button id="login-signup-btn" class="btn btn-outline">Log In</button>
+                    <!-- User Profile Dropdown (Hidden by default) -->
+                    <div id="user-profile" class="user-dropdown" style="display: none;">
+                        <button class="user-trigger" id="user-trigger">
+                            <span id="user-greeting">Hi, User</span>
+                            <span class="dropdown-arrow">▾</span>
+                        </button>
+                        <div class="user-dropdown-menu">
+                            <button id="logout-btn" class="user-dropdown-item">🚪 Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+        </div>
+    </header>
+
+    <!-- LANDING VIEW -->
+    <main id="landing-view">
+        <section class="hero-section">
+            <div class="container fluid">
+                <div class="hero-grid">
+                    <div class="hero-text-container">
+                        <h1 class="giant-text">Transfer<br>Playlist</h1>
+                        <p class="hero-sub">
+                            Seamlessly move your playlists across the digital landscape.<br>
+                            <span class="platform-list">Spotify • Apple Music • YouTube Music • YouTube • Amazon Music •
+                                Tidal •
+                                Deezer • JioSaavn • Pandora • SoundCloud</span>
+                        </p>
+                        <div class="hero-actions">
+                            <button id="get-started-btn" class="btn btn-primary btn-lg">GET STARTED</button>
+                            <button id="learn-more-btn" class="btn btn-outline btn-lg">MORE</button>
+                        </div>
+
+                        <div class="stats-badge">
+                            <div class="avatars">
+                                <span class="avatar">👱</span>
+                                <span class="avatar">👩</span>
+                                <span class="avatar">🧑</span>
+                            </div>
+                            <div class="stats-text">
+                                <strong>245K+</strong>
+                                <span>Playlists Transferred</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-visual">
+                        <!-- CSS Abstract Blob -->
+                        <div class="abstract-shape">
+                            <div class="blob-center"></div>
+                            <div class="floating-card c1">Spotify</div>
+                            <div class="floating-card c2">Apple Music</div>
+                            <div class="floating-card c4">YouTube Music</div>
+                            <div class="floating-card c7">YouTube</div>
+                            <div class="floating-card c5">Amazon Music</div>
+                            <div class="floating-card c6">JioSaavn</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section id="how-it-works" class="features-section">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <span class="f-num">01</span>
+                        <h3>Connect</h3>
+                        <p>Link your music accounts securely.</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="f-num">02</span>
+                        <h3>Select</h3>
+                        <p>Choose the playlists you want to move.</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="f-num">03</span>
+                        <h3>Transfer</h3>
+                        <p>Watch as we magically move your music.</p>
+                    </div>
+                </div>
+
+                <!-- AI Playlist Creator Promo Removed -->
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <div class="faq-grid">
+                    <details class="faq-item">
+                        <summary>Is Plansfer free to use?</summary>
+                        <p>Yes, our basic playlist transfer service is completely free for all users. We believe music
+                            should be portable and accessible everywhere.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Is my data and password safe?</summary>
+                        <p>Absolutely. We use OAuth 2.0 for authentication, which means we never see or store your
+                            password. We only request temporary permission to read and create playlists.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Which platforms do you support?</summary>
+                        <p>We currently support transfers between Spotify, Apple Music, YouTube Music, Amazon Music,
+                            Deezer, and Tidal. We are constantly adding more!</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Will I lose my playlist on the original platform?</summary>
+                        <p>No! We copy your playlist to the new platform. The original playlist remains exactly where it
+                            is on your source account.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- APP VIEW (Hidden until Login) -->
+    <main id="app-view" style="display: none;">
+        <section class="transfer-dashboard">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h2>Transfer your Playlist</h2>
+                    <div class="transfer-steps">
+                        <div class="step-item">
+                            <span class="step-icon">🔗</span>
+                            <span class="step-text">Paste Link & Auto-Detect</span>
+                        </div>
+                        <div class="step-arrow">→</div>
+                        <div class="step-item">
+                            <span class="step-icon">🎯</span>
+                            <span class="step-text">Select Destination</span>
+                        </div>
+                        <div class="step-arrow">→</div>
+                        <div class="step-item">
+                            <span class="step-icon">🚀</span>
+                            <span class="step-text">Login & Transfer</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="transfer-interface">
+                    <!-- Source -->
+                    <div class="interface-col source">
+                        <div class="input-wrapper">
+                            <label>SOURCE URL</label>
+                            <input type="text" id="playlist-url" placeholder="Paste playlist link...">
+                            <div id="detected-platform" style="display:none;">
+                                <span id="platform-text">Spotify Detected</span>
+                            </div>
+                        </div>
+                        <button id="fetch-playlist" class="btn btn-black btn-block">FETCH DATA</button>
+
+                        <!-- Preview -->
+                        <div id="playlist-preview" class="preview-card" style="display: none;">
+                            <img id="preview-image" src="" alt="Cover">
+                            <div class="p-info">
+                                <h4 id="preview-name">Playlist Name</h4>
+                                <span id="preview-details">0 Tracks</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Destination -->
+                    <div class="interface-col dest">
+                        <div class="input-wrapper">
+                            <label>DESTINATION</label>
+                            <select id="destination-platform">
+                                <option value="">Select Platform</option>
+                                <option value="youtube">YouTube</option>
+                                <option value="youtube-music">YouTube Music</option>
+                                <option value="amazon-music">Amazon Music</option>
+                                <option value="spotify">Spotify</option>
+                                <option value="apple-music" disabled>Apple Music (Coming Soon)</option>
+                            </select>
+                        </div>
+
+                        <div id="auth-status" class="status-box">
+                            <p>Login Required</p>
+                        </div>
+
+                        <button id="login-button" class="btn btn-outline btn-block" disabled>CONNECT ACCOUNT</button>
+                        <button id="transfer-button" class="btn btn-primary btn-block" disabled>START TRANSFER</button>
+                    </div>
+                </div>
+
+                <!-- Progress Overlay -->
+                <div id="progress-section" class="progress-overlay" style="display: none;">
+                    <div class="progress-modal">
+                        <h3>Transferring...</h3>
+                        <div class="p-bar-bg">
+                            <div id="progress-fill" class="p-bar-fill"></div>
+                        </div>
+                        <p id="progress-message">Initializing</p>
+                        <span id="progress-percentage">0%</span>
+                    </div>
+                </div>
+
+                <!-- Success Overlay -->
+                <div id="success-section" class="success-overlay" style="display: none;">
+                    <div class="success-modal">
+                        <h3>Success!</h3>
+                        <p id="success-message">Playlist transferred.</p>
+                        <button onclick="document.getElementById('success-section').style.display='none'"
+                            class="btn btn-primary">DONE</button>
+                        <a id="success-link" href="#" target="_blank" class="btn btn-link">View Playlist</a>
+                    </div>
+                </div>
+
+                <!-- AI Playlist Creator Section Removed -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close" id="close-modal">&times;</button>
+            <div id="login-form">
+                <h2>Welcome Back</h2>
+                <button id="google-login" class="btn btn-google btn-block">
+                    <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
+                        <path fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                        <path fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                    </svg>
+                    Continue with Google
+                </button>
+                <div class="divider"><span>or</span></div>
+                <input type="email" id="login-email" placeholder="Email" class="clean-input">
+                <input type="password" id="login-password" placeholder="Password" class="clean-input">
+                <button id="login-submit" class="btn btn-primary btn-block">LOG IN</button>
+                <p class="switch-msg">No account? <a href="#" id="show-signup">Sign up</a></p>
+            </div>
+
+            <div id="signup-form" style="display: none;">
+                <h2>Get Started</h2>
+                <button id="google-signup" class="btn btn-google btn-block">
+                    <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
+                        <path fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                        <path fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                    </svg>
+                    Continue with Google
+                </button>
+                <div class="divider"><span>or</span></div>
+                <input type="text" id="signup-name" placeholder="Name" class="clean-input">
+                <input type="email" id="signup-email" placeholder="Email" class="clean-input">
+                <input type="password" id="signup-password" placeholder="Password" class="clean-input">
+                <button id="signup-submit" class="btn btn-primary btn-block">CREATE ACCOUNT</button>
+                <p class="switch-msg">Has account? <a href="#" id="show-login">Log in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logout-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-card modal-sm">
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout?</p>
+            <div class="modal-actions">
+                <button id="logout-cancel" class="btn btn-outline">Cancel</button>
+                <button id="logout-confirm" class="btn btn-primary">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Removed Footer for cleaner look, added concise footprint -->
+    <div class="footprint">
+        PLANSFER © 2026
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ai-playlist.js"></script>
+    <script src="js/script.js"></script>
+    <!-- Error Dialog Modal -->
+    <div id="error-dialog" class="error-dialog-overlay" style="display: none;">
+        <div class="error-dialog">
+            <div class="error-dialog-icon">⚠️</div>
+            <h3 class="error-dialog-title">Something went wrong</h3>
+            <p id="error-dialog-message" class="error-dialog-message"></p>
+            <button id="error-dialog-close" class="btn btn-primary error-dialog-btn">OK</button>
+        </div>
+    </div>
+
+</body>
+
+</html>

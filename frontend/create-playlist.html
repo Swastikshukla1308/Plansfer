@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plansfer - Transfer Your Playlists Across Platforms</title>
+    <script>
+        (function () {
+            try {
+                var savedTheme = localStorage.getItem('musikTransferTheme') || 'light';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } catch (error) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
+    <script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Background Gradient -->
+    <div class="main-bg"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container fluid">
+            <div class="logo">
+                <span class="logo-text">PLANSFER</span>
+            </div>
+            <nav class="nav" id="main-nav">
+                <div class="nav-dropdown">
+                    <button class="nav-link dropdown-trigger">Features ▾</button>
+                    <div class="dropdown-menu">
+                        <a href="index.html" onclick="handleFeatureNavigation(event, 'index.html')"
+                            class="dropdown-item">Transfer Playlist</a>
+                        <a href="create-playlist.html" onclick="handleFeatureNavigation(event, 'create-playlist.html')"
+                            class="dropdown-item active">AI Playlist Creator</a>
+                    </div>
+                </div>
+                <div id="auth-section">
+                    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
+                    <button id="login-signup-btn" class="btn btn-outline">Log In</button>
+                    <!-- User Profile Dropdown (Hidden by default) -->
+                    <div id="user-profile" class="user-dropdown" style="display: none;">
+                        <button class="user-trigger" id="user-trigger">
+                            <span id="user-greeting">Hi, User</span>
+                            <span class="dropdown-arrow">▾</span>
+                        </button>
+                        <div class="user-dropdown-menu">
+                            <button id="logout-btn" class="user-dropdown-item">🚪 Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="ai-page-container" style="padding-top: 8rem; min-height: 80vh;">
+        <div class="container">
+            <div class="dashboard-header" style="text-align: center; margin-bottom: 2rem;">
+                <h2>AI Playlist Creator</h2>
+                <div class="transfer-steps">
+                    <span class="step-item">💭 Describe Vibe</span>
+                    <span class="divider">→</span>
+                    <span class="step-item">✨ AI Generates</span>
+                    <span class="divider">→</span>
+                    <span class="step-item">💾 Save Playlist</span>
+                </div>
+            </div>
+
+            <div class="transfer-interface">
+                <!-- AI Input Section -->
+                <div class="interface-col">
+                    <div class="input-wrapper">
+                        <label>DESCRIBE YOUR VIBE</label>
+                        <textarea id="ai-prompt" class="clean-input ai-prompt-input" rows="4"
+                            placeholder="E.g., Create a chill lo-fi playlist for studying late at night..."></textarea>
+                    </div>
+
+                    <button id="generate-ai-playlist" class="btn btn-primary btn-block btn-lg"
+                        style="margin-top: 2rem;">
+                        ✨ GENERATE PLAYLIST
+                    </button>
+                </div>
+
+                <!-- AI Result (Hidden until generation) -->
+                <div id="ai-result" class="ai-result" style="display: none; width: 100%;">
+                    <div class="divider"><span>Result</span></div>
+                    <div class="result-card"
+                        style="background: var(--bg-body); padding: 2rem; border-radius: 16px; margin-top: 2rem;">
+                        <h4 style="margin-bottom: 1rem; font-family: var(--font-head);">🎵 Generated Playlist</h4>
+                        <ul id="ai-song-list" class="ai-song-list" style="list-style: none; padding: 0;">
+                            <!-- Songs will be added here dynamically -->
+                        </ul>
+                        <div class="ai-result-actions"
+                            style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+                            <button id="save-ai-playlist" class="btn btn-primary">SAVE TO PLATFORM</button>
+                            <button id="regenerate-ai-playlist" class="btn btn-outline">REGENERATE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close" id="close-modal">&times;</button>
+            <div id="login-form">
+                <h2>Welcome Back</h2>
+                <button id="google-login" class="btn btn-google btn-block">
+                    <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
+                        <path fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                        <path fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                    </svg>
+                    Continue with Google
+                </button>
+                <div class="divider"><span>or</span></div>
+                <input type="email" id="login-email" placeholder="Email" class="clean-input">
+                <input type="password" id="login-password" placeholder="Password" class="clean-input">
+                <button id="login-submit" class="btn btn-primary btn-block">LOG IN</button>
+                <p class="switch-msg">No account? <a href="#" id="show-signup">Sign up</a></p>
+            </div>
+
+            <div id="signup-form" style="display: none;">
+                <h2>Get Started</h2>
+                <button id="google-signup" class="btn btn-google btn-block">
+                    <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
+                        <path fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                        <path fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                    </svg>
+                    Continue with Google
+                </button>
+                <div class="divider"><span>or</span></div>
+                <input type="text" id="signup-name" placeholder="Name" class="clean-input">
+                <input type="email" id="signup-email" placeholder="Email" class="clean-input">
+                <input type="password" id="signup-password" placeholder="Password" class="clean-input">
+                <button id="signup-submit" class="btn btn-primary btn-block">CREATE ACCOUNT</button>
+                <p class="switch-msg">Has account? <a href="#" id="show-login">Log in</a></p>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- AI Save Destination Modal -->
+    <div id="ai-save-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close" id="close-ai-save-modal">&times;</button>
+            <h2 style="margin-bottom: 2rem;">Save Playlist</h2>
+            <div class="input-wrapper" style="margin-bottom: 1.5rem;">
+                <label>DESTINATION PLATFORM</label>
+                <select id="ai-destination-platform" class="clean-input" style="width: 100%;">
+                    <option value="">Select Platform</option>
+                    <option value="spotify">Spotify</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="youtube-music">YouTube Music</option>
+                    <option value="amazon-music">Amazon Music</option>
+                    <option value="apple-music" disabled>Apple Music (Coming Soon)</option>
+                </select>
+            </div>
+            <button id="ai-save-confirm-btn" class="btn btn-primary btn-block">CONNECT & SAVE</button>
+        </div>
+    </div>
+    <div id="logout-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-card modal-sm">
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout?</p>
+            <div class="modal-actions">
+                <button id="logout-cancel" class="btn btn-outline">Cancel</button>
+                <button id="logout-confirm" class="btn btn-primary">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Removed Footer for cleaner look, added concise footprint -->
+    <div class="footprint">
+        PLANSFER © 2026
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ai-playlist.js"></script>
+    <script src="js/script.js"></script>
+    <!-- Error Dialog Modal -->
+    <div id="error-dialog" class="error-dialog-overlay" style="display: none;">
+        <div class="error-dialog">
+            <div class="error-dialog-icon">⚠️</div>
+            <h3 class="error-dialog-title">Something went wrong</h3>
+            <p id="error-dialog-message" class="error-dialog-message"></p>
+            <button id="error-dialog-close" class="btn btn-primary error-dialog-btn">OK</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
