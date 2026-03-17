@@ -246,6 +246,12 @@ body {
     align-items: center;
 }
 
+.logo {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
 .logo-text {
     font-family: var(--font-head);
     font-weight: 800;
